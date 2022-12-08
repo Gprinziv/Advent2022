@@ -1,4 +1,6 @@
 from numpy import zeros
+from numpy import rot90
+from numpy import array
 
 def getTrees(fn):
     trees = []
@@ -9,8 +11,8 @@ def getTrees(fn):
 
 
 def p1():
-    trees = getTrees("test")
-    t2 = transpose(trees)
+    trees = array(getTrees("test"))
+    t2 = rot90(trees,2)
     t3 = zeros((len(trees[0]), len(trees)), int)
 
     print(trees)
@@ -18,11 +20,12 @@ def p1():
     print(t3)
     total = len(trees) * len(trees[0])
 
-    lmax, umax, rmax, dmax = trees[1][0], trees[0][1], 
+    lmax, umax, rmax, dmax = trees[1][0], trees[0][1], t2[1][0], t2[0][1]
+    print(f"Left {lmax}, Right: {rmax}, Up: {umax}, Down: {dmax}")
 
     for j in range(1, len(trees)-1):
         for i in range(1, len(trees[0])-1):
-    
+            break
     return total
 
 def p2():
