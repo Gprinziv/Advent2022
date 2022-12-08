@@ -1,39 +1,34 @@
-from re import split as resplit
+from numpy import zeros
 
-def getStartingLists():
-    with open("input") as f:
-        start, moves = f.read().split("\n\n")
-    
-    instructions = []
-    for line in moves.split("\n"):
-        nums = [int(i) for i in resplit("[a-z ]+", line)[1:]]
-        instructions.append(nums)
+def getTrees(fn):
+    trees = []
+    with open(fn) as f:
+        for line in f.readlines():
+            trees.append([int(i) for i in line.strip()])
+    return trees
 
-    boxes = []
-    start = start.split("\n")
-    for i in range(1, len(start[0]))[::4]:
-        temp = []
-        for line in start[:-1]:
-            if line[i] != " ":
-                temp.insert(0, line[i])
-        boxes.append(temp)
-    return instructions, boxes
 
 def p1():
-    instructions, boxes = getStartingLists()
+    trees = getTrees("test")
+    t2 = transpose(trees)
+    t3 = zeros((len(trees[0]), len(trees)), int)
+
+    print(trees)
+    print(t2)
+    print(t3)
+    total = len(trees) * len(trees[0])
+
+    lmax, umax, rmax, dmax = trees[1][0], trees[0][1], 
+
+    for j in range(1, len(trees)-1):
+        for i in range(1, len(trees[0])-1):
     
-    for amt, toBox, fromBox in instructions:
-        boxes[fromBox-1] += reversed(boxes[toBox-1][-amt:])
-        boxes[toBox-1] = boxes[toBox-1][:-amt]
-    return "".join(i[-1] for i in boxes)
+    return total
 
 def p2():
-    instructions, boxes = getStartingLists()
-
-    for amt, toBox, fromBox in instructions:
-        boxes[fromBox-1] += boxes[toBox-1][-amt:]
-        boxes[toBox-1] = boxes[toBox-1][:-amt]
-    return "".join(i[-1] for i in boxes)
+    trees = getTrees("input")
+    total = len(trees) * len(trees[0])    
+    return total
     
 print(p1())
 print(p2())
