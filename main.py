@@ -11,22 +11,27 @@ def getTrees(fn):
 
 
 def p1():
-    trees = array(getTrees("test"))
+    trees = array(getTrees("input"))
     t2 = rot90(trees,2)
     t3 = zeros((len(trees[0]), len(trees)), int)
 
-    print(trees)
-    print(t2)
-    print(t3)
-    total = len(trees) * len(trees[0])
-
-    lmax, umax, rmax, dmax = trees[1][0], trees[0][1], t2[1][0], t2[0][1]
-    print(f"Left {lmax}, Right: {rmax}, Up: {umax}, Down: {dmax}")
-
     for j in range(1, len(trees)-1):
+        lmax, rmax = trees[1][0], t2[1][0]
+        umax, dmax = trees[0][:], t2[0][:]
         for i in range(1, len(trees[0])-1):
-            break
-    return total
+            if trees[j][i] > lmax:
+                lmax = trees[j][i]
+                t3[j][i] = 1
+            if trees[j][i] > umax[i]:
+                umax[i] = trees[j][i]
+                t3[j][i] = 1
+            if t2[j][i] > rmax:
+                rmax = t2[j][i]
+                t3[-1-j][-1-i] = 1
+            if t2[j][i] > dmax[i]:
+                dmax[i] = t2[j][i]
+                t3[-1-j][-1-i] = 1
+    return sum(sum(t3)) + 2 * (len(t3) + len(t3[0]) - 2)
 
 def p2():
     trees = getTrees("input")
