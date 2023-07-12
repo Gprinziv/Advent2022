@@ -22,8 +22,12 @@ def part1():
                     for j in range(len(cur)):
                         dirs[cur[j]] += int(cmd[0])
                 i += 1
-
-    total = sum([val for val in dirs.values() if val < 100000])
+    t1 = 0
+    for val in dirs.values():
+        if val <= 100000:
+            t1 += val
+    print(t1)            
+    total = sum([val for val in dirs.values() if val <= 100000])
     print(total)
 
 part1()
