@@ -1,42 +1,58 @@
-from numpy import zeros
-from numpy import rot90
-from numpy import array
+class Monkey:
+    def __init__(self, text):
+        self.inspections = 0
+        lines = text.split("\n")
+        self.number = int(lines[0][7])
+        self.items = [int(x) for x in lines[1].split(": ")[1].split(", ")]
+        self.operation = lines[2].split("= ")[1]
+        self.divisibility = int(lines[3].split()[-1])
+        self.targets = [int(lines[4][-1]), int(lines[5][-1])]
 
-def getTrees(fn):
-    trees = []
-    with open(fn) as f:
-        for line in f.readlines():
-            trees.append([int(i) for i in line.strip()])
-    return trees
+    def evalItems(self, mList):
+        for old in self.items:
+            self.inspections += 1
+            old = (eval(self.operation)) #// 3
+            if old % self.divisibility == 0:
+                mList[self.targets[0]].catch(old)
+            else:
+                mList[self.targets[1]].catch(old)
+        self.items = []
 
+    def getInspections(self):
+        return self.inspections
 
-def p1():
-    trees = array(getTrees("input"))
-    t2 = rot90(trees,2)
-    t3 = zeros((len(trees[0]), len(trees)), int)
+    def catch(self, item):
+        self.items.append(item)
 
-    for j in range(1, len(trees)-1):
-        lmax, rmax = trees[1][0], t2[1][0]
-        umax, dmax = trees[0][:], t2[0][:]
-        for i in range(1, len(trees[0])-1):
-            if trees[j][i] > lmax:
-                lmax = trees[j][i]
-                t3[j][i] = 1
-            if trees[j][i] > umax[i]:
-                umax[i] = trees[j][i]
-                t3[j][i] = 1
-            if t2[j][i] > rmax:
-                rmax = t2[j][i]
-                t3[-1-j][-1-i] = 1
-            if t2[j][i] > dmax[i]:
-                dmax[i] = t2[j][i]
-                t3[-1-j][-1-i] = 1
-    return sum(sum(t3)) + 2 * (len(t3) + len(t3[0]) - 2)
+    def getID(self):
+        return self.number
 
-def p2():
-    trees = getTrees("input")
-    total = len(trees) * len(trees[0])    
-    return total
-    
-print(p1())
-print(p2())
+    def getItems(self):
+        return self.items
+
+    def getOp(self):
+        return self.operation
+
+    def getDivisibility(self):
+        return self.divisibility
+
+    def getTargets(self):
+        return self.targets
+
+def part1():
+    with open("input") as f:
+        monkeylist = []
+        for m in f.read().split("\n\n"):
+            monkeylist.append(Monkey(m))
+
+    for _ in range(10000):
+        for monkey in monkeylist:
+            monkey.evalItems(monkeylist)
+
+    for monkey in monkeylist:
+        print(f"Monkey items: {monkey.getItems()}. Number of inspections: {monkey.getInspections()}")
+    iList = sorted([m.getInspections() for m in monkeylist])
+    print(iList)
+    print(iList[-1] * iList[-2])
+
+part1()
