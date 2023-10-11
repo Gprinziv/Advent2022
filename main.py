@@ -1,36 +1,32 @@
-def main():
-    with open("input") as f:
-        cmds = [line.strip() for line in f.readlines()]
+from numpy import zeros
+from numpy import rot90
+from numpy import array
 
-    dirs, dirCounter, i, cur = {}, 0, 0, []
+def getTrees(fn):
+    trees = []
+    with open(fn) as f:
+        for line in f.readlines():
+            trees.append([int(i) for i in line.strip()])
+    return trees
 
-    while i < len(cmds):
-        cmd = cmds[i].split()
-        if cmd[1] =="cd":
-            if cmd[2] == "..":
-                cur.pop()
-            else:
-                cur.append(dirCounter)
-                dirs[dirCounter] = 0
-                dirCounter += 1
-            i += 1
-        else:
-            i += 1
-            while i < len(cmds) and cmds[i][0] != "$":
-                cmd = cmds[i].split()
-                if cmd[0] != "dir":
-                    for dir in cur:
-                        dirs[dir] += int(cmd[0])
-                i += 1
-    print(dirs)    
+def p1():
+    trees = array(getTrees("input"))
+    tmap = zeros((len(trees[0]), len(trees)), int)
 
-    #Part 1
-    total = sum([val for val in dirs.values() if val <= 100000])
-    print(f"Sum of directories under 100k is {total}.")
+    t2 = rot90(trees, -1)
+    print(t2)
+    for j in range(1, len(trees)-1):
+        for i in range(1, len(trees[0])-1):
+            if trees[j][i] > max(trees[j][:i]) or trees[j][i] > max(trees[j][i+1:]) or trees[j][i] > max(t2[i][-j:]) or trees[j][i] > max(t2[i][:-j-1]):
+                tmap[j][i] = 1
+                
+    #The forest is a perfect square so we can "simplify" to the length of a side - 1
+    return sum(sum(tmap)) + 4 * (len(tmap) - 1)
 
-    #Part 2
-    needed = dirs[0] - 40000000
-    print(f"The size of the smallest directory you can delete is {sorted([val for val in dirs.values() if val >= needed])[0]}")
-
-
-main()
+def p2():
+    trees = getTrees("input")
+    total = len(trees) * len(trees[0])    
+    return total
+    
+print(p1())
+print(p2())
