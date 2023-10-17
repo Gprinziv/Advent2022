@@ -1,6 +1,6 @@
 #bound the array by the difference between the left and right.
 def main():
-    with open("test") as f:
+    with open("input") as f:
         walls = []
         for line in f.readlines():
             wall = [[int(x.split(",")[0]), int(x.split(",")[1])] for x in line.split(" -> ")]
@@ -57,18 +57,19 @@ def main():
             print(sand)
             break
     
-    for line in sandmap:
-        print(line)
+    #for line in sandmap:
+    #    print(line)
     print(f"Total sand dropped: {total}")
 
 def main2():
-    with open("test") as f:
+    with open("input") as f:
         walls = []
         for line in f.readlines():
             wall = [[int(x.split(",")[0]), int(x.split(",")[1])] for x in line.split(" -> ")]
             walls.append(wall)
-    dmax = max(x[1] for wall in walls for x in wall) + 1
-    sandmap = [["0"] * (dmax*2 + 1) for _ in range(dmax+1)] + [["#"] * (dmax*2+1)]
+    dmax = max(x[1] for wall in walls for x in wall) + 2
+    sandmap = [["_"] * (dmax*2 + 1) for _ in range(dmax)] + [["#"] * (dmax*2+1
+                                                                       )]
     
     sandmap[0][dmax] = "+"
     for wall in walls:
@@ -101,28 +102,28 @@ def main2():
     total = 0
     while sandmap[0][dmax] != "o":
         try:
-            if sandmap[sand[1] + 1][sand[0]] == "0":
+            if sandmap[sand[1] + 1][sand[0]] == "_":
                 sand[1] += 1
-            elif sandmap[sand[1] + 1][sand[0]-1] == "0":
+            elif sandmap[sand[1] + 1][sand[0]-1] == "_":
                 sand[0] -= 1
                 sand[1] += 1
-            elif sandmap[sand[1] + 1][sand[0]+1] == "0":
+            elif sandmap[sand[1] + 1][sand[0]+1] == "_":
                 sand[0] += 1
                 sand[1] += 1
             else:
                 sandmap[sand[1]][sand[0]] = "o"
                 total += 1
-                print(sand)
-                sand = [dmax, 1]
-                for line in sandmap:
-                    print(line)
-                _ = input()
+                #print(sand)
+                sand = [dmax, 0]
+                #for line in sandmap:
+                #    print(line)
+                #_ = input()
         except IndexError:
             print(f"Sand fell off the map at {sand}!")
             break
     
-    for line in sandmap:
-        print(line)
+    #for line in sandmap:
+    #    print(line)
     print(f"Total sand dropped: {total}")    
 
 main()
