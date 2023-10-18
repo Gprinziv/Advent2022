@@ -1,9 +1,5 @@
 import re
-TEST = 10
-TEST2 = 21
-PART1 = 2000000
-PART2 = 4000001
-
+TEST, TEST2, PART1, PART2 = 10, 21, 2000000, 4000000
 
 def main():
     target = PART1
@@ -14,7 +10,6 @@ def main():
         coords = []
         for line in f.readlines():
             coords.append([int(y) for y in re.split(",|:|=", line)[1::2]])
-
 
     #Calculate the "reach" of the coordinate by abs(dx) + abs(dy), then subtract the current y value from that sum. That is the range (plus and minus)
     #from x that can't have a beacon. Add those x values to a set, then count the length of the set minus the length of a second set of beacons
@@ -39,40 +34,40 @@ def main():
     #print(f"The empty set is {empty}")
     print(len(empty) - len(full))
 
-#Find the sdiff of each beacon, then in a nested for loop compare the distance to each beacon to that of the point.
-#Pros: Easy as hell to write.
-#Cons: Slow, slow as shit. Like multiple days to finish slow
 def main2():
-    with open("test") as f:
+    with open("input") as f:
         coords = []
         for line in f.readlines():
             coords.append([int(y) for y in re.split(",|:|=", line)[1::2]])
+
     #I could probably have done this in the above equation but meh, this works.
     #Get the sdiff for each beacon here.
     for x in range(len(coords)):
-        coords[x] = coords[x] + [abs(coords[x][0] - coords[x][2]) + abs(coords[x][1] - coords[x][3])]
-    
-    """
-    for j in range(PART2):
-        for i in range(PART2):
-            isoFlag = True
-            for sen in coords:
-                if (abs(sen[0] - i) + abs(sen[1] - j)) <= sen[4]:
-                    isoFlag = False
-                    break
-            if isoFlag == True:
-                print(f"Good coords at ({i}, {j})")
-                return
-    """
-    for sen in coords:
-        print(f"Coords ({sen[0]}, {sen[1]}); sdiff: {sen[4]}")
-        for j in range(sen[1] - sen[4], sen[1] + sen[4] + 1):
-            i = sen[4] - (j-sen[1]) 
-            print(j)
-        #check every point on the perimeter and compare it to the distances of each other beacon.
-        #Start at the top, then go down-right, then go down-left, then go up-left, then go up-right.
-#Let's look at it another way. WE don't need to check every point, just the points that are 1 greater than the perimeter of each beacon.
+        coords[x] = coords[x][0:2] + [abs(coords[x][0] - coords[x][2]) + abs(coords[x][1] - coords[x][3])]
 
+    #So each beacon makes four lines. The positive lines are sen[1] - sen[0] +- (sdiff+1). The negative lines are sen[1] + sen[0] +- (sdiff+1)
+    #Add all coefficients to a list.
+    pos, neg = set(), set()
+    for sen in coords:
+        pos.add(sen[1] - sen[0] + sen[2] + 1)
+        pos.add(sen[1] - sen[0] - sen[2] - 1)
+        neg.add(sen[1] + sen[0] + sen[2] + 1)
+        neg.add(sen[1] + sen[0] - sen[2] - 1)
+
+    #x+pos = -x+neg => x+x = neg - pos => x = (neg-pos)/2
+    #y = (neg-pos)/2 + pos => y = (neg - pos + 2pos)/2 => y = (pos+neg)/2
+    #For each pos, neg pair, the intersection point is ((neg-pos)/2, (pos+neg)/2)
+    for p in pos:
+        for n in neg:
+            intersect = (int((n-p)/2), int((n+p)/2))
+            if all(0<=i<=PART2 for i in intersect):
+                beaconFlag = True
+                for sen in coords:
+                    if abs(sen[0] - intersect[0]) + abs(sen[1] - intersect[1]) <= sen[2]:
+                        beaconFlag = False
+                if beaconFlag == True:
+                    print(f"Found it at {intersect}")
+                    print(f"Tuning frequency is {intersect[0] * PART2 + intersect[1]}")
 
 #main()
 main2()
